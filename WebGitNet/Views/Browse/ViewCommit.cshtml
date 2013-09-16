@@ -1,6 +1,23 @@
 ﻿@model IList<DiffInfo>
 @{
     var commitLogEntry = (LogEntry)ViewBag.CommitLogEntry;
+
+	/* rg from commit 0da1158f7ee54687b6afc25219ffdd36db011b19 */
+	Func<char, string> diffLineStyle = c =>
+	{
+		switch (c)
+		{
+			case '+':
+				return "diff-line-add";
+			case '-':
+				return "diff-line-remove";
+			case ' ':
+				return "diff-line-context";
+			default:
+				return "diff-line-info";
+		}
+	};
+	
     ViewBag.Title = "View Commit";
 }
 
@@ -12,6 +29,28 @@
             $("div.date").timeago();
         });
     </script>
+
+	<!-- rg style hacks -->
+	<style type="text/css">
+		ol.linenums li
+		{
+			text-shadow: none;
+		}
+
+		pre.prelinediff {
+			border: none;
+			background: none;
+			margin: 0px;
+			padding: 0px;
+		}
+
+		.diff-line-info {
+			display: block;
+			margin-top: 10px;
+			border-top: solid 1px #ccc;
+			border-bottom: solid 1px #ccc;
+		}
+	</style>
 }
 
 @Html.Partial("LogEntry", commitLogEntry, new ViewDataDictionary { { "Details", true } })
@@ -43,8 +82,15 @@
     </div>
     if (!diff.Deleted && !diff.Added)
     {
-        <div>
-            <pre>@string.Join(Environment.NewLine, diff.Lines)</pre>
+        <div class="prettyprint">
+			<!-- rg from commit 0da1158f7ee54687b6afc25219ffdd36db011b19 -->
+			
+				@foreach (var line in diff.Lines)
+				{				
+					<pre class="prelinediff prettyprint"><span class="diff-line @diffLineStyle(line[0])">@Html.Raw(Html.Encode(line).Replace("\t", "   "))</span></pre>
+				}
+            
         </div>
     }
+	<br />
 }

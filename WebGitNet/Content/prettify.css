@@ -23,3 +23,8 @@ ol.linenums li {
   line-height: 20px;
   text-shadow: 0 1px 0 #fff;
 }
+
+/* rg from commit 0da1158f7ee54687b6afc25219ffdd36db011b19 */
+.diff-line-add { background: #afa; }
+.diff-line-remove { background: #faa; }
+.diff-line-info { background: #ddd; }
